@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    SECRET_KEY = 'django-insecure-oin309n-920ifenpw-oi89boiqwmldfjqw908-for-dev'
 
 DEBUG = os.getenv('DEBUG') == 'True'
 
