@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>AUST · {{ track.title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0F1E;
+            --bg-secondary: #111827;
+            --bg-card: #1A2235;
+            --bg-card-hover: #1F2A42;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-blue: #3B82F6;
+            --accent-teal: #14B8A6;
+            --accent-gold: #F59E0B;
+            --accent-green: #10B981;
+            --shadow-card: 0 20px 40px -15px rgba(0,0,0,0.5);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(20,184,166,0.12) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out;
+            flex-wrap: wrap;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            touch-action: manipulation;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .back-button:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .back-button i {
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .track-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .track-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .track-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Search bar */
+        .search-bar {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.7s ease-out;
+            transition: var(--transition);
+            max-width: 400px;
+        }
+
+        .search-bar:focus-within {
+            border-color: rgba(59,130,246,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .search-bar i {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats */
+        .stats-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 100px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Project cards grid */
+        .projects-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.08);
+            touch-action: manipulation;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: var(--shadow-card);
+        }
+
+        .project-card:active {
+            transform: scale(0.98);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.05);
+        }
+
+        .project-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+        }
+
+        .project-image-placeholder i {
+            font-size: 48px;
+            color: rgba(255,255,255,0.3);
+            transition: var(--transition);
+        }
+
+        .project-card:hover .project-image-placeholder i {
+            transform: scale(1.1);
+            color: rgba(255,255,255,0.5);
+        }
+
+        .status-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .status-overlay.status-approved {
+            background: rgba(16,185,129,0.2);
+            color: var(--accent-green);
+            border: 1px solid rgba(16,185,129,0.3);
+        }
+
+        .status-overlay.status-pending {
+            background: rgba(245,158,11,0.2);
+            color: var(--accent-gold);
+            border: 1px solid rgba(245,158,11,0.3);
+        }
+
+        .status-overlay.status-review {
+            background: rgba(59,130,246,0.2);
+            color: var(--accent-blue);
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+
+        .project-content {
+            padding: 16px 18px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .project-team {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .team-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .team-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+            line-height: 1.3;
+        }
+
+        .project-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: auto;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .meta-item i {
+            font-size: 12px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state span {
+            font-size: 14px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .projects-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .track-title {
+                font-size: 32px;
+            }
+            
+            .project-image {
+                height: 200px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 40px;
+            }
+            
+            .projects-container {
+                gap: 24px;
+            }
+            
+            .project-image {
+                height: 220px;
+            }
+            
+            .stats-container {
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .stats-container {
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 10px 8px;
+            }
+            
+            .stat-number {
+                font-size: 20px;
+            }
+            
+            .project-title {
+                font-size: 16px;
+            }
+            
+            .project-image {
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'home' %}" class="back-button" aria-label="Go back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-info">
+                <div class="track-label">Track</div>
+                <div class="track-title">{{ track.title }}</div>
+                <div class="track-subtitle">{{ track.sub_title }}</div>
+            </div>
+        </div>
+
+        <!-- Search and Stats Row -->
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+            <!-- Search -->
+            <form method="GET" action="" class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search projects..." value="{{ request.GET.search }}">
+            </form>
+
+            <!-- Stats -->
+            <div class="stats-container" style="margin-bottom: 0; flex: 1;">
+                <div class="stat-card">
+                    <div class="stat-number">{{ projects.count }}</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_students }}</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ track.tags|wordcount }}</div>
+                    <div class="stat-label">Tags</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-container" style="margin-top: 24px;">
+            {% if projects %}
+                {% for project in projects %}
+                
+                <a href="{% url 'project_detail' project.project_code %}" class="project-card">
+                    <!-- Project Image -->
+                    <div class="project-image">
+                        {% if project.image %}
+                            <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                        {% else %}
+                            <div class="project-image-placeholder">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Status Overlay -->
+                        <div class="status-overlay status-{{ project.status }}">
+                            {{ project.get_status_display }}
+                        </div>
+                    </div>
+
+                    <!-- Project Content -->
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-team">
+                                {% for member in project.team_members.all|slice:":3" %}
+                                    <div class="team-avatar">{{ member.initials }}</div>
+                                {% endfor %}
+                            </div>
+                            <span class="team-count">{{ project.student_count }} members</span>
+                        </div>
+                        
+                        <div class="project-title">{{ project.title }}</div>
+                        <p class="project-description">{{ project.description }}</p>
+                        
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-code"></i>
+                                <span>{{ project.technology }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ project.created_at|date:"M Y" }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>{{ project.student_count }} students</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>No projects found</p>
+                    <span>Try adjusting your search</span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

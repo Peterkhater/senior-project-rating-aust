@@ -1,0 +1,725 @@
+<!-- templates/core/project_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>{{ project.title }} · Evaluation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0F1E;
+            --bg-secondary: #111827;
+            --bg-card: #1A2235;
+            --bg-card-hover: #1F2A42;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-blue: #3B82F6;
+            --accent-teal: #14B8A6;
+            --accent-gold: #F59E0B;
+            --accent-green: #10B981;
+            --accent-purple: #8B5CF6;
+            --accent-red: #EF4444;
+            --shadow-card: 0 20px 40px -15px rgba(0,0,0,0.5);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(20,184,166,0.12) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
+
+        .back-button:active { transform: scale(0.95); }
+
+        .back-button i {
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .header-info { flex: 1; }
+
+        .track-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .track-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Project Code Banner */
+        .project-code-banner {
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.2));
+            border: 1px solid rgba(139,92,246,0.3);
+            padding: 14px 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.7s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .project-code-banner i {
+            font-size: 24px;
+            color: var(--accent-purple);
+        }
+
+        .project-code-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--accent-purple);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Messages */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .alert-success {
+            background: rgba(16,185,129,0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16,185,129,0.3);
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        /* Project Info Card */
+        .project-info {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .project-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+            line-height: 1.3;
+        }
+
+        .project-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .meta-badge i {
+            color: var(--accent-gold);
+            font-size: 14px;
+        }
+
+        /* Team Section */
+        .team-section {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 16px;
+        }
+
+        .team-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .team-member-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .team-member-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .member-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .member-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .member-email {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.9s ease-out;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Evaluation Form */
+        .evaluation-section {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--accent-gold);
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: rgba(59,130,246,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            border-color: rgba(59,130,246,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Rating Radio Buttons */
+        .rating-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .rating-option input[type="radio"] {
+            display: none;
+        }
+
+        .rating-option label {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: var(--transition);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .rating-option input[type="radio"]:checked + label {
+            background: rgba(245,158,11,0.2);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(245,158,11,0.2);
+        }
+
+        .rating-option label:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .rating-option label:active {
+            transform: scale(0.9);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 14px;
+            color: #0A0F1E;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            touch-action: manipulation;
+        }
+
+        .submit-btn:hover {
+            background: #FBBF24;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(245,158,11,0.4);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .project-title {
+                font-size: 28px;
+            }
+            
+            .rating-option label {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .project-title {
+                font-size: 20px;
+            }
+            
+            .project-code-text {
+                font-size: 16px;
+            }
+            
+            .rating-option label {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'track_project_list' project.track.id %}" class="back-button" aria-label="Go back">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-info">
+                <div class="track-label">Track</div>
+                <div class="track-title">{{ project.track.title }}</div>
+            </div>
+        </div>
+
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-check-circle"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Project Info -->
+        <div class="project-info">
+            <h1 class="project-title">{{ project.title }}</h1>
+            <p class="project-description">{{ project.description }}</p>
+            
+            <div class="project-meta">
+                <div class="meta-badge">
+                    <i class="fas fa-code"></i>
+                    <span>{{ project.technology }}</span>
+                </div>
+                <div class="meta-badge">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ project.created_at|date:"F Y" }}</span>
+                </div>
+                <div class="meta-badge">
+                    <i class="fas fa-users"></i>
+                    <span>{{ project.student_count }} members</span>
+                </div>
+            </div>
+
+            <!-- Team Members -->
+            <div class="team-section">
+                <div class="team-title">Team Members</div>
+                <div class="team-members">
+                    {% for member in project.team_members.all %}
+                    <div class="team-member-card">
+                        <div class="member-avatar">{{ member.initials }}</div>
+                        <div class="member-info">
+                            <span class="member-name">{{ member.full_name }}</span>
+                            <span class="member-email">{{ member.email }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        {% if total_evaluations > 0 %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_evaluations }}</div>
+                <div class="stat-label">Reviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ avg_total|floatformat:1 }}%</div>
+                <div class="stat-label">Avg Score</div>
+            </div>
+            {% if avg_scores %}
+            <div class="stat-card">
+                <div class="stat-value">{{ avg_scores.problem_innovation|floatformat:1 }}</div>
+                <div class="stat-label">Innovation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ avg_scores.technical_excellence|floatformat:1 }}</div>
+                <div class="stat-label">Technical</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ avg_scores.industry_impact|floatformat:1 }}</div>
+                <div class="stat-label">Impact</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Evaluation Form -->
+        <div class="evaluation-section">
+            <div class="section-title">
+                <i class="fas fa-star"></i>
+                Quick Evaluation
+            </div>
+            
+            <form method="POST" action="{% url 'submit_evaluation' project.project_code %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">Your Name *</label>
+                    <input type="text" name="evaluator_name" class="form-input" required placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Your Email *</label>
+                    <input type="email" name="evaluator_email" class="form-input" required placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Organization (Optional)</label>
+                    <input type="text" name="evaluator_organization" class="form-input" placeholder="Company / University">
+                </div>
+
+                <!-- Criteria 1: Problem & Innovation (20%) -->
+                <div class="form-group">
+                    <label class="form-label">1. Problem & Innovation (20%)</label>
+                    <div class="rating-group">
+                        {% for i in "12345" %}
+                        <div class="rating-option">
+                            <input type="radio" name="problem_innovation" value="{{ forloop.counter }}" id="pi{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                            <label for="pi{{ forloop.counter }}">{{ forloop.counter }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Criteria 2: Technical Excellence (25%) -->
+                <div class="form-group">
+                    <label class="form-label">2. Technical Excellence (25%)</label>
+                    <div class="rating-group">
+                        {% for i in "12345" %}
+                        <div class="rating-option">
+                            <input type="radio" name="technical_excellence" value="{{ forloop.counter }}" id="te{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                            <label for="te{{ forloop.counter }}">{{ forloop.counter }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Criteria 3: Functionality & Demonstration (20%) -->
+                <div class="form-group">
+                    <label class="form-label">3. Functionality & Demo (20%)</label>
+                    <div class="rating-group">
+                        {% for i in "12345" %}
+                        <div class="rating-option">
+                            <input type="radio" name="functionality_demo" value="{{ forloop.counter }}" id="fd{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                            <label for="fd{{ forloop.counter }}">{{ forloop.counter }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Criteria 4: Presentation & Team (15%) -->
+                <div class="form-group">
+                    <label class="form-label">4. Presentation & Team (15%)</label>
+                    <div class="rating-group">
+                        {% for i in "12345" %}
+                        <div class="rating-option">
+                            <input type="radio" name="presentation_team" value="{{ forloop.counter }}" id="pt{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                            <label for="pt{{ forloop.counter }}">{{ forloop.counter }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Criteria 5: Industry Impact (20%) -->
+                <div class="form-group">
+                    <label class="form-label">5. Industry Impact (20%)</label>
+                    <div class="rating-group">
+                        {% for i in "12345" %}
+                        <div class="rating-option">
+                            <input type="radio" name="industry_impact" value="{{ forloop.counter }}" id="ii{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                            <label for="ii{{ forloop.counter }}">{{ forloop.counter }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="form-group">
+                    <label class="form-label">Comments (Optional)</label>
+                    <textarea name="comments" class="form-textarea" placeholder="Any feedback or suggestions..."></textarea>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
+                    Submit Evaluation
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

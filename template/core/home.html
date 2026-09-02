@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>AUST · Project Evolution</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0F1E;
+            --bg-secondary: #111827;
+            --bg-card: #1A2235;
+            --bg-card-hover: #1F2A42;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-blue: #3B82F6;
+            --accent-teal: #14B8A6;
+            --accent-purple: #8B5CF6;
+            --accent-gold: #F59E0B;
+            --gradient-blue: linear-gradient(135deg, #1E3A8A, #3B82F6);
+            --gradient-teal: linear-gradient(135deg, #0F766E, #14B8A6);
+            --shadow-card: 0 20px 40px -15px rgba(0,0,0,0.5);
+            --shadow-button: 0 8px 20px -5px rgba(0,0,0,0.3);
+            --border-radius: 24px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Dynamic background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(20,184,166,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.08) 0%, transparent 60%);
+            z-index: -1;
+        }
+
+        /* Subtle grid overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 20px 40px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        /* Header section */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .aust-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(145deg, #1E293B, #0F172A);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aust-badge::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .aust-badge i {
+            font-size: 36px;
+            color: var(--accent-gold);
+            position: relative;
+            z-index: 1;
+        }
+
+        .university-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        /* Track cards */
+        .track-cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .track-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 24px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .track-card:active {
+            transform: scale(0.98);
+            background: var(--bg-card-hover);
+        }
+
+        .track-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .track-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px 2px 0 0;
+            transition: var(--transition);
+        }
+
+        .track-card[data-track="CCE/MTE"]::before {
+            background: var(--gradient-blue);
+        }
+
+        .track-card[data-track="CSI/ICT"]::before {
+            background: var(--gradient-teal);
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+        }
+
+        .track-card[data-track="CCE/MTE"] .card-icon {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.3);
+        }
+
+        .track-card[data-track="CSI/ICT"] .card-icon {
+            background: rgba(20,184,166,0.15);
+            border-color: rgba(20,184,166,0.3);
+        }
+
+        .card-icon i {
+            font-size: 28px;
+            transition: var(--transition);
+        }
+
+        .track-card[data-track="CCE/MTE"] .card-icon i {
+            color: var(--accent-blue);
+        }
+
+        .track-card[data-track="CSI/ICT"] .card-icon i {
+            color: var(--accent-teal);
+        }
+
+        .card-text {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .card-arrow {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .card-arrow i {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .track-card:hover .card-arrow {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .track-card:hover .card-arrow i {
+            transform: translateX(4px);
+            color: var(--text-primary);
+        }
+
+        /* Action buttons */
+        .action-section {
+            margin-top: 32px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .primary-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px -5px rgba(59,130,246,0.4);
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .primary-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 15px -5px rgba(59,130,246,0.3);
+        }
+
+        .primary-button i {
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .primary-button:hover {
+            background: #2563EB;
+            box-shadow: 0 15px 30px -5px rgba(59,130,246,0.5);
+            transform: translateY(-2px);
+        }
+
+        .primary-button:hover i {
+            transform: translateX(4px);
+        }
+
+        .secondary-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .secondary-info i {
+            color: var(--accent-gold);
+            font-size: 14px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+            max-width: 90%;
+            white-space: nowrap;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .toast i {
+            font-size: 20px;
+            color: var(--accent-gold);
+        }
+
+        .toast span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 481px) {
+            .mobile-container {
+                padding: 40px 24px;
+            }
+            
+            .page-title {
+                font-size: 36px;
+            }
+            
+            .track-card {
+                padding: 28px 24px;
+            }
+            
+            .card-title {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .card-content {
+                gap: 12px;
+            }
+            
+            .card-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+            }
+            
+            .card-icon i {
+                font-size: 24px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            .card-description {
+                font-size: 12px;
+            }
+        }
+
+        /* Dark mode optimization */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #0A0F1E;
+                --bg-card: #1A2235;
+                --text-primary: #F8FAFC;
+                --text-secondary: #94A3B8;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="aust-badge">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="university-name">American University of Science & Technology</div>
+            <h1 class="page-title">Project Evolution</h1>
+            <p class="page-subtitle">Select your track to explore senior projects</p>
+        </div>
+
+        <!-- Track Selection Cards -->
+        <div class="track-cards-container">
+            {% for track in tracks %}
+            <a href="{% url 'track_project_list' track.pk %}" style="text-decoration: none;">
+                <div class="track-card" data-track="{{ track.title }}" onclick="handleTrackSelect('{{ track.title }}', this)" role="button" tabindex="0" aria-label="Select {{ track.title }} track">
+                    <div class="card-content">
+                        <div class="card-icon">
+                            <i class="{{ track.icon_class }}"></i>
+                        </div>
+                        <div class="card-text">
+                            <div class="card-title">{{ track.title }}</div>
+                            <div class="card-subtitle">{{ track.sub_title }}</div>
+                            <p class="card-description">{{ track.tags }}</p>
+                        </div>
+                        <div class="card-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+            
+        </div>
+
+        <!-- Primary Action -->
+        <div class="action-section">
+            <button class="primary-button" onclick="handlePrimaryAction()">
+                <span>View All Projects</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <div class="secondary-info">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Industry showcase · Senior projects 2024/2025</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Add touch feedback for mobile
+        document.querySelectorAll('.track-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.backgroundColor = 'rgba(255,255,255,0.08)';
+            });
+            
+            card.addEventListener('touchend', () => {
+                setTimeout(() => {
+                    card.style.backgroundColor = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
