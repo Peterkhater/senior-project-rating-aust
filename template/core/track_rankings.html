@@ -1,0 +1,306 @@
+<!-- templates/core/track_rankings.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rankings · {{ track.title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0F1E;
+            --bg-card: #1A2235;
+            --bg-card-hover: #1F2A42;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-gold: #F59E0B;
+            --accent-silver: #94A3B8;
+            --accent-bronze: #B45309;
+            --accent-blue: #3B82F6;
+            --accent-purple: #8B5CF6;
+            --accent-green: #10B981;
+            --shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(20,184,166,0.12) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .back-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .back-button i {
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .header-info h1 {
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .header-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .podium-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 18px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            min-width: 150px;
+            transition: var(--transition);
+        }
+
+        .podium-card.first {
+            background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.05));
+            border-color: rgba(245,158,11,0.4);
+            transform: scale(1.1);
+        }
+
+        .podium-card.second {
+            background: linear-gradient(135deg, rgba(148,163,184,0.2), rgba(148,163,184,0.05));
+            border-color: rgba(148,163,184,0.4);
+        }
+
+        .podium-card.third {
+            background: linear-gradient(135deg, rgba(180,83,9,0.2), rgba(180,83,9,0.05));
+            border-color: rgba(180,83,9,0.4);
+        }
+
+        .podium-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .podium-rank {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .podium-score {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 4px;
+        }
+
+        .podium-project {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ranking-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .ranking-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateX(4px);
+        }
+
+        .rank-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+
+        .rank-1 { background: rgba(245,158,11,0.2); color: var(--accent-gold); }
+        .rank-2 { background: rgba(148,163,184,0.2); color: var(--accent-silver); }
+        .rank-3 { background: rgba(180,83,9,0.2); color: var(--accent-bronze); }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-project {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .ranking-code {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+        }
+
+        .ranking-score {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .score-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .score-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="{% url 'home' %}" class="back-button">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <div class="header-info">
+                <h1>{{ track.title }} Rankings</h1>
+                <p>{{ total_projects }} projects ranked</p>
+            </div>
+        </div>
+
+        {% if project_scores %}
+            <!-- Top 3 Podium -->
+            <div class="podium">
+                {% for item in project_scores|slice:":3" %}
+                <div class="podium-card {% if item.rank == 1 %}first{% elif item.rank == 2 %}second{% elif item.rank == 3 %}third{% endif %}">
+                    <div class="podium-icon">
+                        {% if item.rank == 1 %}
+                            🥇
+                        {% elif item.rank == 2 %}
+                            🥈
+                        {% elif item.rank == 3 %}
+                            🥉
+                        {% endif %}
+                    </div>
+                    <div class="podium-rank">Rank #{{ item.rank }}</div>
+                    <div class="podium-score">{{ item.avg_total|floatformat:1 }}%</div>
+                    <div class="podium-project">{{ item.project.title|truncatechars:20 }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Full Ranking List -->
+            <div class="ranking-list">
+                {% for item in project_scores %}
+                <a href="{% url 'project_detail' item.project.project_code %}" class="ranking-card">
+                    <div class="rank-number rank-{{ item.rank }}">
+                        {{ item.rank }}
+                    </div>
+                    <div class="ranking-info">
+                        <div class="ranking-project">{{ item.project.title }}</div>
+                        <div class="ranking-code">{{ item.project.project_code }}</div>
+                    </div>
+                    <div class="ranking-score">
+                        <div class="score-value">{{ item.avg_total|floatformat:1 }}%</div>
+                        <div class="score-label">{{ item.total_evaluations }} reviews</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-trophy"></i>
+                <p>No evaluations yet</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

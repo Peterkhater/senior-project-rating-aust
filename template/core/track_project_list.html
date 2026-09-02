@@ -538,22 +538,24 @@
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" placeholder="Search projects..." value="{{ request.GET.search }}">
             </form>
-
-            <!-- Stats -->
-            <div class="stats-container" style="margin-bottom: 0; flex: 1;">
-                <div class="stat-card">
-                    <div class="stat-number">{{ projects.count }}</div>
-                    <div class="stat-label">Projects</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">{{ total_students }}</div>
-                    <div class="stat-label">Students</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">{{ track.tags|wordcount }}</div>
-                    <div class="stat-label">Tags</div>
-                </div>
+            {% if user.is_staff %}
+            <div style="margin-bottom: 20px;">
+                <a href="{% url 'track_rankings' track.id %}" 
+                style="display: inline-flex; align-items: center; gap: 8px; 
+                        background: rgba(139,92,246,0.2); 
+                        border: 1px solid rgba(139,92,246,0.3); 
+                        padding: 10px 18px; 
+                        border-radius: 12px; 
+                        color: #8B5CF6; 
+                        text-decoration: none; 
+                        font-size: 14px; 
+                        font-weight: 600;
+                        transition: all 0.3s;">
+                    <i class="fas fa-clipboard-list"></i>
+                    View Rankings
+                </a>
             </div>
+            {% endif %}
         </div>
 
         <!-- Projects Grid -->

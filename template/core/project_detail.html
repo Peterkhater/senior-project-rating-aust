@@ -539,6 +539,27 @@
                 <div class="track-label">Track</div>
                 <div class="track-title">{{ project.track.title }}</div>
             </div>
+
+            <!-- Add this after the project code banner -->
+            {% if user.is_staff %}
+            <div style="margin-bottom: 20px;">
+                <a href="{% url 'project_evaluations_admin' project.project_code %}" 
+                style="display: inline-flex; align-items: center; gap: 8px; 
+                        background: rgba(139,92,246,0.2); 
+                        border: 1px solid rgba(139,92,246,0.3); 
+                        padding: 10px 18px; 
+                        border-radius: 12px; 
+                        color: #8B5CF6; 
+                        text-decoration: none; 
+                        font-size: 14px; 
+                        font-weight: 600;
+                        transition: all 0.3s;">
+                    <i class="fas fa-clipboard-list"></i>
+                    View Evaluations ({{ total_evaluations }})
+                </a>
+            </div>
+            
+            {% endif %}
         </div>
 
 
@@ -589,7 +610,7 @@
             </div>
         </div>
 
-        <!-- Statistics -->
+        {% comment %} <!-- Statistics -->
         {% if total_evaluations > 0 %}
         <div class="stats-grid">
             <div class="stat-card">
@@ -615,111 +636,114 @@
             </div>
             {% endif %}
         </div>
-        {% endif %}
+        {% endif %} {% endcomment %}
 
         <!-- Evaluation Form -->
-        <div class="evaluation-section">
-            <div class="section-title">
-                <i class="fas fa-star"></i>
-                Quick Evaluation
-            </div>
-            
-            <form method="POST" action="{% url 'submit_evaluation' project.project_code %}">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label class="form-label">Your Name *</label>
-                    <input type="text" name="evaluator_name" class="form-input" required placeholder="Enter your name">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Your Email *</label>
-                    <input type="email" name="evaluator_email" class="form-input" required placeholder="Enter your email">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Organization (Optional)</label>
-                    <input type="text" name="evaluator_organization" class="form-input" placeholder="Company / University">
-                </div>
-
-                <!-- Criteria 1: Problem & Innovation (20%) -->
-                <div class="form-group">
-                    <label class="form-label">1. Problem & Innovation (20%)</label>
-                    <div class="rating-group">
-                        {% for i in "12345" %}
-                        <div class="rating-option">
-                            <input type="radio" name="problem_innovation" value="{{ forloop.counter }}" id="pi{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
-                            <label for="pi{{ forloop.counter }}">{{ forloop.counter }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Criteria 2: Technical Excellence (25%) -->
-                <div class="form-group">
-                    <label class="form-label">2. Technical Excellence (25%)</label>
-                    <div class="rating-group">
-                        {% for i in "12345" %}
-                        <div class="rating-option">
-                            <input type="radio" name="technical_excellence" value="{{ forloop.counter }}" id="te{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
-                            <label for="te{{ forloop.counter }}">{{ forloop.counter }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Criteria 3: Functionality & Demonstration (20%) -->
-                <div class="form-group">
-                    <label class="form-label">3. Functionality & Demo (20%)</label>
-                    <div class="rating-group">
-                        {% for i in "12345" %}
-                        <div class="rating-option">
-                            <input type="radio" name="functionality_demo" value="{{ forloop.counter }}" id="fd{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
-                            <label for="fd{{ forloop.counter }}">{{ forloop.counter }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Criteria 4: Presentation & Team (15%) -->
-                <div class="form-group">
-                    <label class="form-label">4. Presentation & Team (15%)</label>
-                    <div class="rating-group">
-                        {% for i in "12345" %}
-                        <div class="rating-option">
-                            <input type="radio" name="presentation_team" value="{{ forloop.counter }}" id="pt{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
-                            <label for="pt{{ forloop.counter }}">{{ forloop.counter }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Criteria 5: Industry Impact (20%) -->
-                <div class="form-group">
-                    <label class="form-label">5. Industry Impact (20%)</label>
-                    <div class="rating-group">
-                        {% for i in "12345" %}
-                        <div class="rating-option">
-                            <input type="radio" name="industry_impact" value="{{ forloop.counter }}" id="ii{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
-                            <label for="ii{{ forloop.counter }}">{{ forloop.counter }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Comments -->
-                <div class="form-group">
-                    <label class="form-label">Comments (Optional)</label>
-                    <textarea name="comments" class="form-textarea" placeholder="Any feedback or suggestions..."></textarea>
-                </div>
-
-                <!-- Submit -->
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
-                    Submit Evaluation
-                </button>
-            </form>
-        </div>
+       <!-- Evaluation Form -->
+<div class="evaluation-section">
+    <div class="section-title">
+        <i class="fas fa-star"></i>
+        {% if has_evaluated %}
+            Your Evaluation Submitted
+        {% else %}
+            Evaluate This Project
+        {% endif %}
     </div>
+    
+    {% if has_evaluated %}
+        <div style="text-align: center; padding: 30px 20px;">
+            <i class="fas fa-check-circle" style="font-size: 64px; color: var(--accent-green); margin-bottom: 16px;"></i>
+            <h3 style="color: var(--text-primary); margin-bottom: 8px;">Thank You!</h3>
+            <p style="color: var(--text-secondary);">You have already evaluated this project.</p>
+        </div>
+    {% else %}
+        <form method="POST" action="{% url 'submit_evaluation' project.project_code %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Your Organization (Optional)</label>
+                <input type="text" name="evaluator_organization" class="form-input" placeholder="Company / University">
+            </div>
+
+            <!-- Criteria 1: Problem & Innovation (20%) -->
+            <div class="form-group">
+                <label class="form-label">1. Problem & Innovation (20%)</label>
+                <div class="rating-group">
+                    {% for i in "12345" %}
+                    <div class="rating-option">
+                        <input type="radio" name="problem_innovation" value="{{ forloop.counter }}" id="pi{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                        <label for="pi{{ forloop.counter }}">{{ forloop.counter }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Criteria 2: Technical Excellence (25%) -->
+            <div class="form-group">
+                <label class="form-label">2. Technical Excellence (25%)</label>
+                <div class="rating-group">
+                    {% for i in "12345" %}
+                    <div class="rating-option">
+                        <input type="radio" name="technical_excellence" value="{{ forloop.counter }}" id="te{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                        <label for="te{{ forloop.counter }}">{{ forloop.counter }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Criteria 3: Functionality & Demonstration (20%) -->
+            <div class="form-group">
+                <label class="form-label">3. Functionality & Demo (20%)</label>
+                <div class="rating-group">
+                    {% for i in "12345" %}
+                    <div class="rating-option">
+                        <input type="radio" name="functionality_demo" value="{{ forloop.counter }}" id="fd{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                        <label for="fd{{ forloop.counter }}">{{ forloop.counter }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Criteria 4: Presentation & Team (15%) -->
+            <div class="form-group">
+                <label class="form-label">4. Presentation & Team (15%)</label>
+                <div class="rating-group">
+                    {% for i in "12345" %}
+                    <div class="rating-option">
+                        <input type="radio" name="presentation_team" value="{{ forloop.counter }}" id="pt{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                        <label for="pt{{ forloop.counter }}">{{ forloop.counter }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Criteria 5: Industry Impact (20%) -->
+            <div class="form-group">
+                <label class="form-label">5. Industry Impact (20%)</label>
+                <div class="rating-group">
+                    {% for i in "12345" %}
+                    <div class="rating-option">
+                        <input type="radio" name="industry_impact" value="{{ forloop.counter }}" id="ii{{ forloop.counter }}" {% if forloop.counter == 3 %}checked{% endif %}>
+                        <label for="ii{{ forloop.counter }}">{{ forloop.counter }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="form-group">
+                <label class="form-label">Comments (Optional)</label>
+                <textarea name="comments" class="form-textarea" placeholder="Any feedback or suggestions..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
+                Submit Evaluation
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+</div>
 </body>
 </html>

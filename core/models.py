@@ -3,6 +3,7 @@ import uuid
 import random
 import string
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Track(models.Model):
     title = models.CharField(max_length=100)
@@ -75,9 +76,9 @@ class TeamMember(models.Model):
 class ProjectEvaluation(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='evaluations')
     
+    
     # Evaluator info (minimal)
-    evaluator_name = models.CharField(max_length=200)
-    evaluator_email = models.EmailField(blank=True,null=True)
+    evaluator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluations', null=True, blank=True)
     evaluator_organization = models.CharField(max_length=200, blank=True,null=True)
     
     # Your specific criteria (1-5 scale)
@@ -111,6 +112,14 @@ class ProjectEvaluation(models.Model):
             self.industry_impact * 4 
         )
     
+    @property
+    def evaluator_name(self):
+        return self.evaluator.get_full_name() or self.evaluator.username
+    
+    @property
+    def evaluator_email(self):
+        return self.evaluator.email
+
     @property
     def percentage_score(self):
         """Return score as percentage"""
